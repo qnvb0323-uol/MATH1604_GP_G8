@@ -1,6 +1,6 @@
 from data_analysis_M3 import generate_means_sequence, visualize_data
 
-file_path = "output/collated_answers.txt"
+file_path = "data/collated_answers.txt"
 
 means = generate_means_sequence(file_path)
 
