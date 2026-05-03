@@ -9,12 +9,7 @@ NUMBER_OF_RESPONDENTS = 64
 
 
 def load_m2_module():
-    """
-    Load the compiled M2 module from the correct .pyc file.
-
-    The .pyc file depends on the Python version.
-    For example, Python 3.12 uses data_preparation_M2.cpython-312.pyc.
-    """
+    """Load the M2 .pyc file based on Python version."""
     version_tag = f"{sys.version_info.major}{sys.version_info.minor}"
 
     possible_paths = [
@@ -52,11 +47,7 @@ def load_m2_module():
 
 
 def main():
-    """
-    Run the M2 data preparation process using the professor-provided .pyc file.
-
-    This script downloads raw answer files and creates output/collated_answers.txt.
-    """
+    """Run M2 to generate collated_answers.txt."""
     data_folder = Path("data")
     output_folder = Path("output")
 
@@ -64,7 +55,8 @@ def main():
     output_folder.mkdir(exist_ok=True)
 
     m2 = load_m2_module()
-
+    
+    # Check required functions
     if not hasattr(m2, "download_answer_files"):
         raise AttributeError("M2 module does not contain download_answer_files().")
 

@@ -6,30 +6,8 @@ import matplotlib.pyplot as plt
 
 def load_collated_data(collated_answers_path):
     """
-    Load collated answer data and convert it into numeric answer sequences.
-
-    This function supports raw collated question-text format, where each
-    respondent section contains Question 1 to Question 100 and selected answers
-    are marked with [X].
-
-    Parameters
-    ----------
-    collated_answers_path : str or pathlib.Path
-        Path to the collated_answers.txt file.
-
-    Returns
-    -------
-    list[list[int]]
-        A list of respondent answer sequences.
-        Each inner list contains 100 answer values:
-        1, 2, 3, 4, or 0 for unanswered.
-
-    Raises
-    ------
-    FileNotFoundError
-        If the collated answers file does not exist.
-    ValueError
-        If a respondent section does not contain exactly 100 questions.
+    Read collated_answers.txt and convert it into answer sequences.
+    Each respondent should have 100 answers.
     """
     path = Path(collated_answers_path)
 
@@ -41,10 +19,7 @@ def load_collated_data(collated_answers_path):
     if not text:
         raise ValueError("The collated answers file is empty.")
 
-    # Important:
-    # Do NOT use text.split("*"), because '*' also appears in Python questions,
-    # such as 2 + 3 * 4 or **.
-    # This regex only splits where a line contains only '*'.
+    # Split respondents (line containing only "*")
     respondent_sections = [
         section.strip()
         for section in re.split(r"(?m)^\s*\*\s*$", text)
@@ -77,7 +52,7 @@ def load_collated_data(collated_answers_path):
                         selected_answer = option_number
 
             sequence.append(selected_answer)
-
+        # Ensure exactly 100 answers
         if len(sequence) != 100:
             raise ValueError(
                 f"Respondent {respondent_number}: expected 100 answers, "
@@ -91,20 +66,8 @@ def load_collated_data(collated_answers_path):
 
 def generate_means_sequence(collated_answers_path):
     """
-    Generate the mean answer value for each question.
-
-    Unanswered questions coded as 0 are excluded from the mean calculation.
-
-    Parameters
-    ----------
-    collated_answers_path : str or pathlib.Path
-        Path to the collated_answers.txt file.
-
-    Returns
-    -------
-    list[float]
-        A list of mean answer values, one for each question.
-        For the final project dataset, this should contain 100 values.
+    Compute mean answer value for each question.
+    Ignore unanswered (0) values.
     """
     data = load_collated_data(collated_answers_path)
     data_array = np.array(data)
@@ -126,24 +89,9 @@ def generate_means_sequence(collated_answers_path):
 
 def visualize_data(collated_answers_path, n):
     """
-    Visualise answer patterns from the collated answer data.
-
-    If n == 1, this function creates a scatter plot of the mean answer values.
-    If n == 2, this function creates a line plot showing individual respondent
-    answer sequences together with the mean answer sequence.
-    If n is neither 1 nor 2, an error message is displayed.
-
-    Parameters
-    ----------
-    collated_answers_path : str or pathlib.Path
-        Path to the collated_answers.txt file.
-    n : int
-        Plot option. Use 1 for scatter plot and 2 for line plot.
-
-    Returns
-    -------
-    None
-        The function displays and saves a visualisation.
+    Visualise results:
+    n = 1 → scatter plot (mean values)
+    n = 2 → line plot (individual + mean)
     """
     data = load_collated_data(collated_answers_path)
     data_array = np.array(data)
